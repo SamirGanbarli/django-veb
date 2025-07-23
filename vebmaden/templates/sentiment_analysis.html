@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Sentiment Analysis Upload</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="file" name="csv_file" required>
+  <button type="submit">Analyze Sentiment</button>
+</form>
+
+{% if sentiment_results %}
+  <h3>Sentiment Predictions</h3>
+  <ul>
+    {% for sentiment in sentiment_results %}
+      <li>{{ sentiment }}</li>
+    {% endfor %}
+  </ul>
+
+  {% if sentiment_chart %}
+    <h3>Sentiment Distribution</h3>
+    <img src="data:image/png;base64,{{ sentiment_chart }}" alt="Sentiment Pie Chart" />
+  {% endif %}
+
+  {% if classification_report %}
+    <h3>Classification Report</h3>
+    <pre>{{ classification_report }}</pre>
+  {% endif %}
+{% endif %}
+{% endblock %}

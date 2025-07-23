@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NLP Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 40px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 48%;
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #007bff;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 6px;
+      background: #eef;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      margin-top: 15px;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    select {
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2>NLP Dashboard: Sentiment Analysis & Topic Detection</h2>
+
+  <div class="container">
+    <!-- Sentiment Analysis Section -->
+    <div class="card">
+      <h3>Sentiment Analysis Upload</h3>
+      <form method="post" enctype="multipart/form-data" action="{% url 'sentiment_analysis' %}">
+        {% csrf_token %}
+        <input type="file" name="csv_file_sentiment" required>
+
+        <label for="text_column">Text Column Name:</label>
+        <input type="text" name="text_column" id="text_column" required placeholder="e.g. reviewText">
+
+        <label for="score_column">Score Column Name:</label>
+        <input type="text" name="score_column" id="score_column" placeholder="e.g. overall (optional)">
+
+        <label for="model_choice">Analysis Method:</label>
+        <select name="model_choice" id="model_choice">
+          <option value="transformer">Transformer (default)</option>
+          <option value="naive_bayes">Naive Bayes</option>
+          <option value="clustering">Clustering</option>
+        </select>
+
+        <button type="submit" name="action" value="sentiment">Analyze Sentiment</button>
+      </form>
+
+      {% if sentiment_chart %}
+        <h4>Sentiment Distribution</h4>
+        <img src="data:image/png;base64,{{ sentiment_chart }}" alt="Sentiment Pie Chart" />
+      {% endif %}
+
+      {% if classification_report %}
+        <h4>Classification Report</h4>
+        <pre>{{ classification_report }}</pre>
+      {% endif %}
+    </div>
+
+    <!-- Topic Detection Section -->
+    <div class="card">
+      <h3>Topic Detection</h3>
+      <form method="post" enctype="multipart/form-data" action="{% url 'topic_modeling' %}">
+        {% csrf_token %}
+        <input type="file" name="csv_file_topic" required>
+
+        <label for="topic_text_column">Text Column Name:</label>
+        <input type="text" name="topic_text_column" id="topic_text_column" required placeholder="e.g. tweet">
+
+        <button type="submit" name="action" value="topic">Upload and Analyze</button>
+       </form>
+
+       {% if topic_error %}
+       <div style="color:red;">{{ topic_error }}</div>
+      {% endif %}
+
+      {% if topic_words %}
+          <h4>Topics</h4>
+          <table border="1" cellpadding="6" style="border-collapse:collapse;">
+            <tr>
+              <th>Topic #</th>
+              <th>Topic Name (Top Words)</th>
+            </tr>
+            {% for topic in topic_words %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ topic.label }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+      {% endif %}
+    </div>
+
+    <!-- Tweet Scraping Part -->
+    <div class="card">
+      <h3>Scrape Wikipedia</h3>
+      <form method="post" action="{% url 'scrape_wikipedia' %}">
+        {% csrf_token %}
+        <label for="wiki_query">Wikipedia Search Term:</label>
+        <input type="text" name="wiki_query" id="wiki_query" required placeholder="e.g. Artificial Intelligence">
+        <button type="submit" name="action" value="scrape_wikipedia">Scrape Wikipedia</button>
+      </form>
+      {% if wiki_error %}
+        <div style="color:red;">{{ wiki_error }}</div>
+      {% endif %}
+      {% if wiki_content %}
+        <h4>Wikipedia Summary</h4>
+        <pre>{{ wiki_content }}</pre>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
