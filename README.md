@@ -87,19 +87,6 @@ Fetches **summarized information** from Wikipedia based on a user-provided keywo
 - Add export/download option for scraped Wikipedia summaries in structured formats (e.g., `.txt`, `.csv`, `.json`).
 
 ---
-
-## 🧪 Example
-
-<p align="center">
-  <img src="docs/sentiment_example.png" alt="Sentiment Pie Chart" width="400"/>
-</p>
-
-<p align="center">
-  <img src="docs/topic_table_example.png" alt="Topic Modeling Output" width="500"/>
-</p>
-
----
-
 ## 📚 Tech Stack
 
 - Python
