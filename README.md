@@ -103,9 +103,4 @@ Fetches **summarized information** from Wikipedia based on a user-provided keywo
 **Samir Ganbarli**  
 This project was developed as part of my work in web mining and applied NLP.
 
----
-
-## 📄 License
-
-[MIT](LICENSE)
 
